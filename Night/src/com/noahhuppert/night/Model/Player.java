@@ -1,14 +1,16 @@
 package com.noahhuppert.night.Model;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector2;
 
-public class Player extends MovableEntity{
+public class Player extends Entity{
 	
 	protected float health;
 	protected float power;
 	
-	public Player(Vector2 position, float width, float height, float rotation, float health, float power) {
-		super(position, width, height, rotation);
+	public Player(Vector2 position, float width, float height, float rotation, Vector2 velocity, boolean stationary, float health, float power) {
+		super(position, width, height, rotation, position, stationary);
 		this.health = health;
 		this.power = power;
 	}

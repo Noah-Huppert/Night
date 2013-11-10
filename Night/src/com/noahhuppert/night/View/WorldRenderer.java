@@ -1,11 +1,14 @@
 package com.noahhuppert.night.View;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
@@ -33,13 +36,20 @@ import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.noahhuppert.night.Night;
+import com.noahhuppert.night.Model.Entity;
 
 public class WorldRenderer {
 	World world;
-	Environment environment;
+	//Environment environment;
 	//PerspectiveCamera cam;
 	OrthographicCamera cam;
-	AssetManager assets;
+	SpriteBatch batch;
+	
+	Iterator<Entity> entityIter;
+	Array<Entity> entities = new Array<Entity>();
+	Entity eIterNext;
+	
+	/*AssetManager assets;
 	ModelBatch modelBatch;
 	Model mainCharecterModel;
 	ModelInstance mainCharecter;
@@ -47,7 +57,7 @@ public class WorldRenderer {
 
 	Model model;
 	ModelBuilder modelBuilder;
-	ModelInstance floor;
+	ModelInstance floor;*/
 
 	// Bullet
 	/*btBroadphaseInterface broadphase = new btDbvtBroadphase();
@@ -76,7 +86,7 @@ public class WorldRenderer {
 		btCollisionShape groundShape = new btStaticPlaneShape(new Vector3(500, 1, 500), 1);//Ground
 		btCollisionShape fallShape = new btSphereShape(1);//Sphere
 		
-		btDefaultMotionState groundMotionState = new btDefaultMotionState(btTransform(new Quaternion(0, 0, 0, 1), new Vector3(0, -1, 0)));*/
+		btDefaultMotionState groundMotionState = new btDefaultMotionState(btTransform(new Quaternion(0, 0, 0, 1), new Vector3(0, -1, 0)));
 
 		environment = new Environment();
 		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.4f,
@@ -84,7 +94,7 @@ public class WorldRenderer {
 		environment.add(new DirectionalLight().set(0.8f, 0.8f, 0.8f, -1f,
 				-0.8f, -0.2f));
 
-		/*cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
+		cam = new PerspectiveCamera(67, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		cam.position.set(50f, 5f, 0f);
 		cam.lookAt(0, 5f, 0);
@@ -92,47 +102,65 @@ public class WorldRenderer {
 		cam.far = 300f;
 		cam.update();*/
 		
-		width = (Gdx.graphics.getWidth() / 30);
-		height = (Gdx.graphics.getHeight() / 30);
+		width = (Gdx.graphics.getWidth() / 10);
+		height = (Gdx.graphics.getHeight() / 10);
 		
 		cam = new OrthographicCamera();
 		cam.setToOrtho(false, width, height);
-		cam.position.set(100f, 5f, 0f);
 		cam.update();
 		
+		batch = new SpriteBatch();
+		batch.setProjectionMatrix(cam.combined);
+		
+		entities = world.getEntities();
+		
 
-		Night.advLog("Models", "Loading");
+		/*Night.advLog("Models", "Loading");
 		modelBatch = new ModelBatch();
 		assets = new AssetManager();
 		assets.load(assetPaths[0], Model.class);
 
 		modelBuilder = new ModelBuilder();
 
-		loading = true;
+		loading = true;*/
 	}
 
 	public void render() {
 
-		if (loading == true && assets.update() == true) {
+		/*if (loading == true && assets.update() == true) {
 			doneLoading();
-		}
+		}*/
+		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(),
 				Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 
-		if (loading == false) {
+		/*if (loading == false) {
 			cam.lookAt(0, 0, 0);
 			cam.update();
 
 			modelBatch.begin(cam);
 			modelBatch.render(instances, environment);
 			modelBatch.end();
-		}
+		}*/
 
 		world.setRenderer(this);
+		
+		entityIter = entities.iterator();
+		
+		cam.position.set(5, 10, 0);
+		cam.update();//Updates camera
+		batch.setProjectionMatrix(cam.combined);
+		
+		batch.begin();//Rendering
+			while(entityIter.hasNext()){
+				eIterNext = entityIter.next();
+				batch.draw(new Texture(eIterNext.getTexturePath()), eIterNext.getPosition().x, eIterNext.getPosition().y, eIterNext.getWidth(), eIterNext.getHeight());Night.advLog("Render", eIterNext.getPosition().toString() + " " + eIterNext.getTexturePath());
+			}
+		batch.end();
 	}
 
-	private void doneLoading() {
+	/*private void doneLoading() {
 		mainCharecter = new ModelInstance(
 				assets.get(assetPaths[0], Model.class));
 		mainCharecter.transform.setToRotation(Vector3.Y, 180).trn(0, 0, 0f);
@@ -147,7 +175,7 @@ public class WorldRenderer {
 
 		loading = false;
 		Night.advLog("Models", "Loading Complete");
-	}
+	}*/
 
 	/*public PerspectiveCamera getCamera() {
 		return cam;
@@ -169,8 +197,9 @@ public class WorldRenderer {
 		solver.dispose();
 		dynamicsWorld.dispose();*/
 
-		modelBatch.dispose();
+		/*modelBatch.dispose();
 		mainCharecterModel.dispose();
-		assets.dispose();
+		assets.dispose();*/
+		batch.dispose();
 	}
 }

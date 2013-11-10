@@ -29,8 +29,8 @@ public class Night extends Game {
 	@Override
 	public void create() {
 		setLogTags();
-		Bullet.init();
-		advLog("Bullet", "Initialized");
+		/*Bullet.init();
+		advLog("Bullet", "Initialized");*/
 		setScreen(new GameScreen(this));
 	}
 	
@@ -60,7 +60,9 @@ public class Night extends Game {
 	}
 	
 	public static void log(String logText){
-		System.out.println(LOG + ".Misc: " + logText);
+		if(logTags[Arrays.asList(logTagNames).indexOf("Misc")] == true ){
+			System.out.println(LOG + ".Misc: " + logText);
+		}
 	}
 	
 	public static void advLog(String tag, String logText){
@@ -73,11 +75,16 @@ public class Night extends Game {
 		logTagNames[0] = "Misc";
 		logTags[0] = true;
 		
-		logTagNames[1] = "Bullet";
+		logTagNames[1] = "Render";
+		logTags[1] = true;
+		
+		logTagNames[2] = "Entity";
+		logTags[2] = true;
+		/*logTagNames[1] = "Bullet";
 		logTags[1] = true;
 		
 		logTagNames[2] = "Models";
-		logTags[2] = true;
+		logTags[2] = true;*/
 	}
 }
 

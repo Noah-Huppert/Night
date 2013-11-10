@@ -1,14 +1,16 @@
 package com.noahhuppert.night.Model;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.math.Vector2;
 
-public class MovableEntity extends Entity{
+public class MEntity extends Entity{
 	
 	protected float rotation;
 	protected Vector2 velocity;
 
-	public MovableEntity(Vector2 position, float width, float height, float rotation) {
-		super(position, width, height);
+	public MEntity(Vector2 position, float width, float height, float rotation) {
+		super(position, width, height, rotation, position, true);
 		this.rotation = rotation;
 		this.velocity = velocity;
 	}
