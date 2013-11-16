@@ -9,6 +9,7 @@ import com.noahhuppert.night.Night;
 import com.noahhuppert.night.Model.Entity;
 import com.noahhuppert.night.Model.MEntity;
 import com.noahhuppert.night.Model.Player;
+import com.noahhuppert.night.Model.Power;
 import com.esotericsoftware.*;
 
 public class World {
@@ -20,13 +21,16 @@ public class World {
 	
 	Entity floor;
 	Player player;
+	Power nullPower;
 	
 	public World(Night game){
 		this.game = game;
 		
+		nullPower = new Power(0, 0);
+		
 		floor = new Entity(new Vector2(0, -4), 5, 1, 0, new Vector2(0, 0), true);
 		entities.add(floor);
-		player = new Player(new Vector2(0, 0), 1, 1, 0, new Vector2(0, 0), false, 100, 100);
+		player = new Player(new Vector2(0, 0), 1, 1, 0, new Vector2(0, 0), false, 100, 100, nullPower);
 		player.setTexturePath("data/head.png");
 	}
 	

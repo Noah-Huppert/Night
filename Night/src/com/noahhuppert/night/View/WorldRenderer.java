@@ -4,13 +4,19 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -19,6 +25,7 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision.btBroadphaseInterface;
@@ -35,8 +42,16 @@ import com.badlogic.gdx.physics.bullet.linearmath.btDefaultMotionState;
 import com.badlogic.gdx.physics.bullet.linearmath.btTransform;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import com.esotericsoftware.spine.Animation;
+import com.esotericsoftware.spine.Event;
+import com.esotericsoftware.spine.Skeleton;
+import com.esotericsoftware.spine.SkeletonData;
+import com.esotericsoftware.spine.SkeletonJson;
+import com.esotericsoftware.spine.SkeletonRenderer;
+import com.esotericsoftware.spine.SkeletonRendererDebug;
 import com.noahhuppert.night.Night;
 import com.noahhuppert.night.Model.Entity;
+import com.noahhuppert.night.Model.Player;
 
 public class WorldRenderer {
 	World world;
@@ -45,10 +60,23 @@ public class WorldRenderer {
 	OrthographicCamera cam;
 	SpriteBatch batch;
 	
+	//For Spine
+	/*SkeletonRenderer renderer;
+    SkeletonRendererDebug debugRenderer;
+	
+    SkeletonData skeletonData;
+    Skeleton skeleton;
+    Animation animation;
+    Array<Event> events = new Array();
+    
+    float time;*/
+    
+	
 	Iterator<Entity> entityIter;
 	Array<Entity> entities = new Array<Entity>();
 	Entity eIterNext;
 	
+	Player player;
 	/*AssetManager assets;
 	ModelBatch modelBatch;
 	Model mainCharecterModel;
@@ -80,6 +108,11 @@ public class WorldRenderer {
 	public WorldRenderer(World world) {
 		assetPaths[0] = "data/mainCharecter/mainCharecter2.g3db";
 		this.world = world;
+		
+		//renderer = new SkeletonRenderer();//SPINE
+        //debugRenderer = new SkeletonRendererDebug();
+
+        final String name = "spineboy";
 
 		// Bullet
 		/*dynamicsWorld.setGravity(new Vector3(0, -10, 0));// Set up gravity
@@ -114,6 +147,38 @@ public class WorldRenderer {
 		
 		entities = world.getEntities();
 		
+		player = world.getPlayer();
+		
+		/*FileHandle atlasFile = Gdx.files.internal(name + ".atlas");//SPINE
+		
+		Pixmap pixmap = new Pixmap(32, 32, Format.RGBA8888);
+        pixmap.setColor(Color.WHITE);
+        pixmap.fill();
+        final AtlasRegion fake = new AtlasRegion(new Texture(pixmap), 0, 0, 32, 32);
+        pixmap.dispose();*/
+		
+       /* TextureAtlasData data = !atlasFile.exists() ? null : new TextureAtlasData(atlasFile, atlasFile.parent(), false);
+        
+		TextureAtlas atlas = new TextureAtlas(data) {
+			public AtlasRegion findRegion (String name) {
+                AtlasRegion region = super.findRegion(name);
+                return region != null ? region : fake;
+			}
+		};*/
+        
+       /* TextureAtlas atlas = new TextureAtlas();
+		
+		SkeletonJson json = new SkeletonJson(atlas);
+		
+		skeletonData = json.readSkeletonData(Gdx.files.internal("data/spineboy/spineboy.json"));
+		
+		animation = skeletonData.findAnimation("jump");
+
+        skeleton = new Skeleton(skeletonData);
+        if (name.equals("goblins")) skeleton.setSkin("goblin");
+        skeleton.setToSetupPose();
+        skeleton = new Skeleton(skeleton);
+        skeleton.updateWorldTransform();*///END BULLET
 
 		/*Night.advLog("Models", "Loading");
 		modelBatch = new ModelBatch();
@@ -152,12 +217,35 @@ public class WorldRenderer {
 		cam.update();//Updates camera
 		batch.setProjectionMatrix(cam.combined);
 		
+		/*float lastTime = time;//SPINE
+        time += Gdx.graphics.getDeltaTime();
+
+        float x = skeleton.getX() + 160 * Gdx.graphics.getDeltaTime() * (skeleton.getFlipX() ? -1 : 1);
+        if (x > Gdx.graphics.getWidth()) skeleton.setFlipX(true);
+        if (x < 0) skeleton.setFlipX(false);
+        skeleton.setX(x);
+
+        Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+        events.clear();
+        animation.apply(skeleton, lastTime, time, true, events);
+        if (events.size > 0) System.out.println(events);
+
+        skeleton.updateWorldTransform();
+        skeleton.update(Gdx.graphics.getDeltaTime());*/
+		
 		batch.begin();//Rendering
-			while(entityIter.hasNext()){
+			while(entityIter.hasNext()){//Regular entity rendering
 				eIterNext = entityIter.next();
-				batch.draw(new Texture(eIterNext.getTexturePath()), eIterNext.getPosition().x, eIterNext.getPosition().y, eIterNext.getWidth(), eIterNext.getHeight());Night.advLog("Render", eIterNext.getPosition().toString() + " " + eIterNext.getTexturePath());
+				batch.draw(new Texture(eIterNext.getTexturePath()), eIterNext.getPosition().x, eIterNext.getPosition().y, eIterNext.getWidth(), eIterNext.getHeight());
 			}
+			
+			//Player rendering
+			batch.draw(new Texture(player.getTexturePath()), player.getPosition().x, player.getPosition().y, player.getWidth(), player.getHeight());
+			//renderer.draw(batch, skeleton);//SPINE
 		batch.end();
+		
+		//debugRenderer.draw(skeleton);//SPINE
 	}
 
 	/*private void doneLoading() {

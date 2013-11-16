@@ -27,4 +27,29 @@ public class Power {
 	public void setPowerDrain(float powerDrain){
 		powerDrain = this.powerDrain;
 	}
+	
+	//Methods
+	public void touchDown(int screenX, int screenY, int pointer, int button, Player player){
+		
+	}
+	
+	public void touchUp(int screenX, int screenY, int pointer, int button, Player player){
+		
+	}
+	
+	public void touchDragged(int screenX, int screenY, int pointer, Player player){
+		
+	}
+	
+	public void mouseMoved(int screenX, int screenY, Player player){
+		
+	}
+	
+	public void keyDown(int keycode, Player player){
+		
+	}
+	
+	public void keyUp(int keycode, Player player){
+		
+	}
 }
